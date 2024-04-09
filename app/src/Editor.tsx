@@ -1,36 +1,35 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import useMediaQuery from "./hooks/useMediaQuery";
-import "./index.css";
+'use client';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import useMediaQuery from './hooks/useMediaQuery';
+import './index.css';
+import { $getRoot, LexicalEditor } from 'lexical';
 
-import { $getRoot } from "lexical";
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { HorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import { TRANSFORMERS } from '@lexical/markdown';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { $generateHtmlFromNodes } from '@lexical/html';
+import Nodes from './nodes';
+import EditorTheme from './themes/EditorTheme';
 
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
-import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { TRANSFORMERS } from "@lexical/markdown";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-import { $generateHtmlFromNodes } from "@lexical/html";
-import { logger } from "@packages/core-fe";
-import Nodes from "./nodes";
-import EditorTheme from "./themes/EditorTheme";
-
-import DragDropPaste from "./plugins/DragDropPastePlugin";
-import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin";
-import LinkPlugin from "./plugins/LinkPlugin";
-import ToolbarPlugin from "./plugins/ToolbarPlugin";
-import ContentEditable from "./ui/ContentEditable";
-import Placeholder from "./ui/Placeholder";
-import LexicalAutoLinkPlugin from "./plugins/AutoLinkPlugin/index";
-import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
-import InlineImagePlugin from "./plugins/InlineImagePlugin";
+import DragDropPaste from './plugins/DragDropPastePlugin';
+import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditorPlugin';
+import LinkPlugin from './plugins/LinkPlugin';
+import ToolbarPlugin from './plugins/ToolbarPlugin';
+import ContentEditable from './ui/ContentEditable';
+import Placeholder from './ui/Placeholder';
+import LexicalAutoLinkPlugin from './plugins/AutoLinkPlugin/index';
+import CodeHighlightPlugin from './plugins/CodeHighlightPlugin';
+import InlineImagePlugin from './plugins/InlineImagePlugin';
 
 const loadContent = () => {
   // 'empty' editor
@@ -41,7 +40,7 @@ const loadContent = () => {
 };
 interface EditorProps {
   value?: string;
-  onChange?;
+  onChange?: any;
 }
 function MyCustomAutoFocusPlugin() {
   const [editor] = useLexicalComposerContext();
@@ -55,13 +54,13 @@ function MyCustomAutoFocusPlugin() {
 }
 
 export function Editor({ value, onChange }: EditorProps) {
-  const isSmallWidthViewPort = useMediaQuery("(max-width: 1025px)");
+  const isSmallWidthViewPort = useMediaQuery('(max-width: 1025px)');
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
   const placeholder = <Placeholder>Enter some rich text...</Placeholder>;
   const initialEditorState = loadContent();
   const initialConfig = {
-    namespace: "MyEditor",
+    namespace: 'MyEditor',
     editorState: initialEditorState,
     theme: EditorTheme,
     onError: (error: Error) => {
@@ -71,10 +70,10 @@ export function Editor({ value, onChange }: EditorProps) {
     showTreeView: true,
   };
 
-  const onChangeValue = (editorState, editor) => {
+  const onChangeValue = (editorState: any, editor: LexicalEditor) => {
     editor.update(() => {
       const rawHTML = $generateHtmlFromNodes(editor, null);
-      onChange(rawHTML);
+      onChange && onChange(rawHTML);
     });
   };
 
@@ -84,23 +83,23 @@ export function Editor({ value, onChange }: EditorProps) {
     }
   };
   useEffect(() => {
-    logger.log(value);
+    console.log(value);
   }, [value]);
 
   return (
     <>
       <LexicalComposer initialConfig={initialConfig}>
-        <div className="editor-shell">
+        <div className='editor-shell'>
           <ToolbarPlugin />
-          <div className="editor-container tree-view">
+          <div className='editor-container tree-view'>
             <ClearEditorPlugin />
             <LexicalAutoLinkPlugin />
             <InlineImagePlugin />
             <CheckListPlugin />
             <RichTextPlugin
               contentEditable={
-                <div className="editor-scroller">
-                  <div className="editor" ref={onRef}>
+                <div className='editor-scroller'>
+                  <div className='editor' ref={onRef}>
                     <ContentEditable />
                   </div>
                 </div>
